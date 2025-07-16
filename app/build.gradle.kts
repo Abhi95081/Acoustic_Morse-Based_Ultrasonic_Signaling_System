@@ -56,4 +56,18 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation("androidx.compose.material3:material3:1.2.0")
+    implementation("androidx.compose.ui:ui-tooling-preview:1.6.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    implementation("androidx.activity:activity-compose:1.8.2")
+
+    // Kotlin Coroutines (for background processing)
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+// Audio Permissions / DSP Libraries (optional, if implementing receiver)
+    implementation("com.github.hiteshsondhi88:android-audio-recorder:1.0.4")
+// optional, for audio recording UI
+    implementation("com.github.wendykierp:JTransforms:3.1")
+
+    
 }
