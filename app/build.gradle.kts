@@ -57,17 +57,25 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+// Jetpack Compose Core Libraries
     implementation("androidx.compose.material3:material3:1.2.0")
     implementation("androidx.compose.ui:ui-tooling-preview:1.6.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
 
-    // Kotlin Coroutines (for background processing)
+// Kotlin Coroutines (background processing)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-// Audio Permissions / DSP Libraries (optional, if implementing receiver)
-    implementation("com.github.hiteshsondhi88:android-audio-recorder:1.0.4")
-// optional, for audio recording UI
+
+
+// Optional - Signal Processing (for FFT, frequency detection)
     implementation("com.github.wendykierp:JTransforms:3.1")
 
-    
+// Debug Tools (Optional)
+    debugImplementation("androidx.compose.ui:ui-tooling:1.6.1")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.1")
+
+    implementation("com.google.accompanist:accompanist-permissions:0.33.2-alpha")
+
+
+
 }
