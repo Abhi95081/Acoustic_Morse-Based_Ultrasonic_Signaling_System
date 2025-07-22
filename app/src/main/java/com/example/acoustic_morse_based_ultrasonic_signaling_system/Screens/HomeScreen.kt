@@ -32,135 +32,170 @@ fun HomeScreen(viewModel: SOSViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp)
+            .padding(16.dp)
             .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(20.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
 
         Text(
             text = "🔊 Ultrasonic SOS Communication",
-            fontSize = 15.sp,
+            fontSize = 18.sp,
             fontWeight = FontWeight.Bold
         )
 
         if (!micPermissionState.status.isGranted) {
-            Text(
-                text = "Microphone permission is required for receiving messages.",
-                color = MaterialTheme.colorScheme.error
-            )
-            Button(
-                onClick = { micPermissionState.launchPermissionRequest() },
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp)
+            Card(
+                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer),
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Grant Microphone Permission")
+                Column(modifier = Modifier.padding(16.dp)) {
+                    Text(
+                        text = "Microphone permission is required for receiving messages.",
+                        color = MaterialTheme.colorScheme.onErrorContainer
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Button(
+                        onClick = { micPermissionState.launchPermissionRequest() },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(8.dp)
+                    ) {
+                        Text("Grant Microphone Permission")
+                    }
+                }
             }
-
             return@Column
         }
 
         /** TRANSMIT SECTION **/
-        Text("📤 Transmit Section", fontWeight = FontWeight.Bold)
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp)) {
+                Text("📤 Transmit Section", fontWeight = FontWeight.Bold, fontSize = 16.sp)
 
-        OutlinedTextField(
-            value = viewModel.message,
-            onValueChange = { viewModel.updateMessage(it) },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text("Enter Message to Transmit") }
-        )
+                OutlinedTextField(
+                    value = viewModel.message,
+                    onValueChange = { viewModel.updateMessage(it) },
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                    label = { Text("Message to Transmit") }
+                )
 
-        Text(
-            text = "Morse Code: ${viewModel.morseCode}",
-            fontSize = 14.sp,
-            fontWeight = FontWeight.Medium
-        )
+                Text(
+                    text = "Morse Code: ${viewModel.morseCode}",
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
 
-        Button(
-            onClick = {
-                viewModel.startTransmission()
-                UltrasonicTransmitter.transmitMorse(viewModel.morseCode)
-                viewModel.stopTransmission()
-            },
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(if (viewModel.isTransmitting) "Transmitting..." else "Transmit Message")
-        }
-
-        Divider()
-
-        /** RECEIVE SECTION **/
-        Text("📥 Receive Section", fontWeight = FontWeight.Bold)
-
-        Button(
-            onClick = {
-                if (!viewModel.isReceiving) {
-                    viewModel.startListening(context)
-                } else {
-                    viewModel.stopListening()
+                Button(
+                    onClick = {
+                        viewModel.startTransmission()
+                        UltrasonicTransmitter.transmitMorse(viewModel.morseCode)
+                        viewModel.stopTransmission()
+                    },
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                ) {
+                    Text(if (viewModel.isTransmitting) "Transmitting..." else "Transmit Message")
                 }
-            },
-            shape = RoundedCornerShape(8.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(if (viewModel.isReceiving) "Stop Receiving" else "Start Receiving")
-        }
-
-        if (viewModel.receivedMessage.isNotEmpty()) {
-            Column {
-                Text("Received Message:", fontWeight = FontWeight.SemiBold)
-                Text(viewModel.receivedMessage)
             }
         }
 
-        if (viewModel.isReceiving) {
-            Text("Listening for incoming ultrasonic signals...")
+        /** RECEIVE SECTION **/
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp)) {
+                Text("📥 Receive Section", fontWeight = FontWeight.Bold, fontSize = 16.sp)
+
+                Button(
+                    onClick = {
+                        if (!viewModel.isReceiving) {
+                            viewModel.startListening(context)
+                        } else {
+                            viewModel.stopListening()
+                        }
+                    },
+                    shape = RoundedCornerShape(8.dp),
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
+                ) {
+                    Text(if (viewModel.isReceiving) "Stop Receiving" else "Start Receiving")
+                }
+
+                if (viewModel.receivedMessage.isNotEmpty()) {
+                    Column(Modifier.padding(top = 8.dp)) {
+                        Text("Received Message:", fontWeight = FontWeight.SemiBold)
+                        Text(viewModel.receivedMessage)
+                    }
+                }
+
+                if (viewModel.isReceiving) {
+                    Text(
+                        "Listening for incoming ultrasonic signals...",
+                        fontSize = 12.sp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+            }
         }
 
-        Divider()
+        /** WRITTEN MORSE MANUAL **/
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp)) {
+                Text("📖 Morse Manual", fontWeight = FontWeight.Bold, fontSize = 16.sp)
 
-        Text("\uD83D\uDCDD Written Morse Section", fontWeight = FontWeight.Bold)
+                Button(
+                    onClick = { showMorseManual = !showMorseManual },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp)
+                ) {
+                    Text(if (showMorseManual) "Hide Morse Manual" else "Show Morse Manual")
+                }
 
-        /** MORSE MANUAL **/
-        Button(
-            onClick = { showMorseManual = !showMorseManual },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(if (showMorseManual) "Hide Morse Manual" else "Show Morse Manual")
+                if (showMorseManual) {
+                    Text(
+                        text = morseManual,
+                        fontSize = 12.sp,
+                        modifier = Modifier
+                            .padding(top = 12.dp)
+                            .fillMaxWidth()
+                    )
+                }
+            }
         }
-
-        if (showMorseManual) {
-            Text(
-                text = morseManual,
-                fontSize = 12.sp,
-                modifier = Modifier.padding(10.dp)
-            )
-        }
-
-        Divider()
 
         /** MANUAL DECODER **/
-        Text("✍️ Manual Morse Decoder", fontWeight = FontWeight.Bold)
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(16.dp)) {
+                Text("✍️ Manual Morse Decoder", fontWeight = FontWeight.Bold, fontSize = 16.sp)
 
-        OutlinedTextField(
-            value = manualMorseInput,
-            onValueChange = { manualMorseInput = it },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text("Enter Morse Code (e.g., ... --- ...)") }
-        )
+                OutlinedTextField(
+                    value = manualMorseInput,
+                    onValueChange = { manualMorseInput = it },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    label = { Text("Enter Morse Code (e.g., ... --- ...)") }
+                )
 
-        Button(
-            onClick = {
-                decodedManualMessage = MorseConverter.decode(manualMorseInput.trim())
-            },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            Text("Decode Morse")
-        }
+                Button(
+                    onClick = {
+                        decodedManualMessage = MorseConverter.decode(manualMorseInput.trim())
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    Text("Decode Morse")
+                }
 
-        if (decodedManualMessage.isNotEmpty()) {
-            Text("Decoded Message: $decodedManualMessage")
+                if (decodedManualMessage.isNotEmpty()) {
+                    Text(
+                        "Decoded Message: $decodedManualMessage",
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                }
+            }
         }
     }
 }
